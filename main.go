@@ -2,10 +2,11 @@ package main
 
 import (
 	"encoding/csv"
-	"fmt"
 	"log"
 	"os"
 	"time"
+
+	"github.com/joho/godotenv"
 )
 
 //TODO: Read csv file and print the content
@@ -55,24 +56,24 @@ func checkTodaysBirthdays(birthdays []Birthday) []Birthday {
 	return todaysBirthdays
 }
 
-func sendEmail(name, password string, age int) {
-	from := "omgydlord@gmail.com"
-	to := []string{"lowry_46@hotmail.com"}
+func sendEmail(name []string, age int) {
+	password := os.Getenv("EMAIL_PASSWORD")
+	fromEmail := os.Getenv("FROM_EMAIL")
+	toEmail := []string{os.Getenv("TO_EMAIL")}
+
+	if len(name) > 1 {
+		// Figure out how to create message with multiple people
+	} else if len(name) == 1 {
+		//Set message for one person
+	}
+	// Finish logic to send email
+
 }
 
 func main() {
 	err := godotenv.Load()
 	if err != nil {
 		log.Fatal("Error loading .env file")
-	}
-	password := os.Getenv("EMAIL_PASSWORD")
-	records := readCSVFile("data/birthdays.csv")
-	todaysBirthdays := checkTodaysBirthdays(records)
-	today := time.Now()
-	if len(todaysBirthdays) != 0 {
-		for _, birthday := range todaysBirthdays {
-			fmt.Printf("Today is %s's birthday!\nThey are %d years old.", birthday.Name, today.Year()-birthday.Birthdate.Year())
-		}
 	}
 
 }
