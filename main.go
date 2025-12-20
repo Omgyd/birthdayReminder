@@ -70,7 +70,7 @@ func calculateAge(birthdate time.Time) int {
 
 func sendEmail(birthdays []Birthday) {
 	if len(birthdays) == 0 {
-		return // No birthdays today, no need to send email
+		return
 	}
 
 	password := os.Getenv("EMAIL_PASSWORD")
@@ -123,5 +123,4 @@ func main() {
 	} else {
 		log.Println("No birthdays today")
 	}
-
 }
