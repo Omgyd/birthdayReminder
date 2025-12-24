@@ -60,6 +60,9 @@ func checkTodaysBirthdays(birthdays []Birthday) []Birthday {
 }
 
 func calculateAge(birthdate time.Time) int {
+	if birthdate.Year() == 0 {
+		return 0
+	}
 	now := time.Now()
 	age := now.Year() - birthdate.Year()
 	if now.YearDay() < birthdate.YearDay() {
