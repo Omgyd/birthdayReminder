@@ -12,7 +12,6 @@ import (
 	"github.com/joho/godotenv"
 )
 
-//TODO: Read csv file and print the content
 
 type Birthday struct {
 	Name      string
