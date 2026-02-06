@@ -112,7 +112,7 @@ func sendEmail(subject, body string) {
 	smtpPort := "587"
 	auth := smtp.PlainAuth("", fromEmail, password, smtpHost)
 
-	msg := []byte(fmt.Sprintf("To: %s\r\nSubject: %s\r\n\r\n%s", strings.Join(toEmail, ","), subject, body))
+	msg := fmt.Appendf(nil, "To: %s\r\nSubject: %s\r\n\r\n%s", strings.Join(toEmail, ","), subject, body)
 	err := smtp.SendMail(smtpHost+":"+smtpPort, auth, fromEmail, toEmail, msg)
 	if err != nil {
 		log.Fatal("Failed to send email:", err)
