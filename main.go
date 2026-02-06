@@ -12,7 +12,6 @@ import (
 	"github.com/joho/godotenv"
 )
 
-
 type Birthday struct {
 	Name      string
 	Birthdate time.Time
@@ -59,6 +58,9 @@ func checkTodaysBirthdays(birthdays []Birthday) []Birthday {
 }
 
 func calculateAge(birthdate time.Time) int {
+	if birthdate.Year() == 0 {
+		return 0
+	}
 	now := time.Now()
 	age := now.Year() - birthdate.Year()
 	if now.YearDay() < birthdate.YearDay() {
@@ -67,16 +69,11 @@ func calculateAge(birthdate time.Time) int {
 	return age
 }
 
-func sendEmail(birthdays []Birthday) {
+func emailBody(birthdays []Birthday) (subject, body string) {
 	if len(birthdays) == 0 {
 		return
 	}
 
-	password := os.Getenv("EMAIL_PASSWORD")
-	fromEmail := os.Getenv("FROM_EMAIL")
-	toEmail := []string{os.Getenv("TO_EMAIL")}
-
-	var subject, body string
 	if len(birthdays) > 1 {
 		names := make([]string, len(birthdays))
 		for i, b := range birthdays {
@@ -88,7 +85,12 @@ func sendEmail(birthdays []Birthday) {
 		bodyParts := []string{}
 		for _, b := range birthdays {
 			age := calculateAge(b.Birthdate)
-			bodyParts = append(bodyParts, fmt.Sprintf("%s (%d)", b.Name, age))
+			if age == 0 {
+				bodyParts = append(bodyParts, fmt.Sprintf("%s", b.Name))
+			} else {
+				bodyParts = append(bodyParts, fmt.Sprintf("%s (%d)", b.Name, age))
+			}
+
 		}
 		body = fmt.Sprintf("Happy Birthday to %s! Hope you all have a wonderful day!", strings.Join(bodyParts, ", "))
 	} else {
@@ -97,6 +99,14 @@ func sendEmail(birthdays []Birthday) {
 		subject = fmt.Sprintf("Happy %dth Birthday to %s!", age, b.Name)
 		body = fmt.Sprintf("Happy Birthday to %s! Hope you have a wonderful day!", b.Name)
 	}
+	return subject, body
+}
+
+func sendEmail(subject, body string) {
+
+	password := os.Getenv("EMAIL_PASSWORD")
+	fromEmail := os.Getenv("FROM_EMAIL")
+	toEmail := []string{os.Getenv("TO_EMAIL")}
 
 	smtpHost := "smtp.gmail.com"
 	smtpPort := "587"
@@ -118,7 +128,7 @@ func main() {
 	birthdays := readCSVFile("./data/birthdays.csv")
 	todaysBirthdays := checkTodaysBirthdays(birthdays)
 	if len(todaysBirthdays) > 0 {
-		sendEmail(todaysBirthdays)
+		sendEmail(emailBody(todaysBirthdays))
 	} else {
 		log.Println("No birthdays today")
 	}
