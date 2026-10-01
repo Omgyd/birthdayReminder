@@ -74,31 +74,25 @@ func emailBody(birthdays []Birthday) (subject, body string) {
 		return
 	}
 
-	if len(birthdays) > 1 {
-		names := make([]string, len(birthdays))
-		for i, b := range birthdays {
-			names[i] = b.Name
-		}
-		nameList := strings.Join(names[:len(names)-1], ", ") + " and " + names[len(names)-1]
-		subject = fmt.Sprintf("Happy Birthday to %s!", nameList)
-
-		bodyParts := []string{}
-		for _, b := range birthdays {
-			age := calculateAge(b.Birthdate)
-			if age == 0 {
-				bodyParts = append(bodyParts, fmt.Sprintf("%s", b.Name))
-			} else {
-				bodyParts = append(bodyParts, fmt.Sprintf("%s (%d)", b.Name, age))
-			}
-
-		}
-		body = fmt.Sprintf("Happy Birthday to %s! Hope you all have a wonderful day!", strings.Join(bodyParts, ", "))
-	} else {
-		b := birthdays[0]
-		age := calculateAge(b.Birthdate)
-		subject = fmt.Sprintf("Happy %dth Birthday to %s!", age, b.Name)
-		body = fmt.Sprintf("Happy Birthday to %s! Hope you have a wonderful day!", b.Name)
+	names := make([]string, len(birthdays))
+	for i, b := range birthdays {
+		names[i] = b.Name
 	}
+	nameList := strings.Join(names, ", ")
+	subject = fmt.Sprintf("Happy Birthday to %s!", nameList)
+
+	bodyParts := []string{}
+	for _, b := range birthdays {
+		age := calculateAge(b.Birthdate)
+		if age == 0 {
+			bodyParts = append(bodyParts, fmt.Sprintf("%s", b.Name))
+		} else {
+			bodyParts = append(bodyParts, fmt.Sprintf("%s (%d)", b.Name, age))
+		}
+
+	}
+	body = fmt.Sprintf("Happy Birthday to %s! Hope you all have a wonderful day!", strings.Join(bodyParts, ", "))
+
 	return subject, body
 }
 
